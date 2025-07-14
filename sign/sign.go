@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/digitorus/pdf"
-	"github.com/digitorus/pkcs7"
+	"github.com/afrizaloky/pkcs7"
 
 	"github.com/mattetti/filebuffer"
 )
