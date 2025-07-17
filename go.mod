@@ -1,4 +1,4 @@
-module github.com/digitorus/pdfsign
+module github.com/afrizaloky/pdfsign
 
 go 1.23.0
 
@@ -13,4 +13,4 @@ require (
 	golang.org/x/text v0.27.0
 )
 
-require github.com/digitorus/pkcs7 v0.0.0-20230713084857-e76b763bdc49 // indirect
+require github.com/digitorus/pkcs7 v0.0.0-20230818184609-3a137a874352 // indirect

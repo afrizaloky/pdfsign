@@ -9,7 +9,7 @@ import (
 	"encoding/pem"
 	"testing"
 
-	"github.com/digitorus/pdfsign/revocation"
+	"github.com/afrizaloky/pdfsign/revocation"
 )
 
 const certPem = `-----BEGIN CERTIFICATE-----
