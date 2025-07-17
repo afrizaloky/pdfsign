@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/digitorus/pdf"
-	"github.com/digitorus/pdfsign/revocation"
-	"github.com/digitorus/pdfsign/verify"
+	"github.com/afrizaloky/pdfsign/revocation"
+	"github.com/afrizaloky/pdfsign/verify"
 	"github.com/mattetti/filebuffer"
 )
 

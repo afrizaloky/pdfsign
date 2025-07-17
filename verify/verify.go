@@ -14,7 +14,7 @@ import (
 
 	"github.com/afrizaloky/pkcs7"
 	"github.com/digitorus/pdf"
-	"github.com/digitorus/pdfsign/revocation"
+	"github.com/afrizaloky/pdfsign/revocation"
 	"github.com/digitorus/timestamp"
 	"golang.org/x/crypto/ocsp"
 )

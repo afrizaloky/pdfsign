@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/digitorus/pdf"
-	"github.com/digitorus/pdfsign/revocation"
+	"github.com/afrizaloky/pdfsign/revocation"
 	"github.com/afrizaloky/pkcs7"
 
 	"github.com/mattetti/filebuffer"
