@@ -52,6 +52,8 @@ type VerifyOptions struct {
 	// HTTPTimeout specifies the timeout for HTTP requests during external revocation checking
 	// If zero, a default timeout of 10 seconds will be used
 	HTTPTimeout time.Duration
+
+	TrustedCertificate *x509.CertPool
 }
 
 type Response struct {

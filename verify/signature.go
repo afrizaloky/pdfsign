@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/afrizaloky/pdfsign/revocation"
+	"github.com/afrizaloky/pkcs7"
 	"github.com/digitorus/pdf"
-	"github.com/digitorus/pdfsign/revocation"
-	"github.com/digitorus/pkcs7"
 	"github.com/digitorus/timestamp"
 )
 
@@ -49,7 +49,7 @@ func processSignature(v pdf.Value, file io.ReaderAt, options *VerifyOptions) (Si
 	}
 
 	// Verify the digital signature
-	err = verifySignature(p7, &signer)
+	err = verifySignature(p7, &signer, options.TrustedCertificate)
 	if err != nil {
 		return signer, fmt.Sprintf("Failed to verify signature: %v", err), nil
 	}
@@ -121,13 +121,7 @@ func processTimestamp(p7 *pkcs7.PKCS7, signer *Signer) error {
 }
 
 // verifySignature verifies the digital signature.
-func verifySignature(p7 *pkcs7.PKCS7, signer *Signer) error {
-	// Directory of certificates, including OCSP
-	certPool := x509.NewCertPool()
-	for _, cert := range p7.Certificates {
-		certPool.AddCert(cert)
-	}
-
+func verifySignature(p7 *pkcs7.PKCS7, signer *Signer, certPool *x509.CertPool) error {
 	// Verify the digital signature of the pdf file.
 	err := p7.VerifyWithChain(certPool)
 	if err != nil {

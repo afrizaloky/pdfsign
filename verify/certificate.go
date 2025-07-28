@@ -5,20 +5,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/digitorus/pdfsign/revocation"
-	"github.com/digitorus/pkcs7"
+	"github.com/afrizaloky/pdfsign/revocation"
+	"github.com/afrizaloky/pkcs7"
 	"github.com/digitorus/timestamp"
 	"golang.org/x/crypto/ocsp"
 )
 
 // buildCertificateChainsWithOptions builds certificate chains with custom verification options
 func buildCertificateChainsWithOptions(p7 *pkcs7.PKCS7, signer *Signer, revInfo revocation.InfoArchival, options *VerifyOptions) (string, error) {
-	// Directory of certificates, including OCSP
-	certPool := x509.NewCertPool()
-	for _, cert := range p7.Certificates {
-		certPool.AddCert(cert)
-	}
-
 	// Determine the verification time and set up time tracking fields
 	var verificationTime *time.Time
 
@@ -133,15 +127,14 @@ func buildCertificateChainsWithOptions(p7 *pkcs7.PKCS7, signer *Signer, revInfo 
 		c.KeyUsageValid, c.KeyUsageError, c.ExtKeyUsageValid, c.ExtKeyUsageError = validateKeyUsage(cert, options)
 
 		// Try to verify with system root CAs first
-		chain, err := cert.Verify(createVerifyOptions(nil, certPool))
-
+		chain, err := cert.Verify(createVerifyOptions(options.TrustedCertificate, nil))
 		if err == nil {
 			// Successfully verified against system trusted roots
 			trustedIssuer = true
 		} else {
 			// If verification fails with system roots, only try embedded certificates if explicitly allowed
 			if options.AllowUntrustedRoots {
-				altChain, verifyErr := cert.Verify(createVerifyOptions(certPool, certPool))
+				altChain, verifyErr := cert.Verify(createVerifyOptions(options.TrustedCertificate, nil))
 
 				// If embedded cert verification fails, record the original system root error
 				if verifyErr != nil {
