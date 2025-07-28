@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/afrizaloky/pdfsign/revocation"
 	"github.com/afrizaloky/pkcs7"
 	"github.com/digitorus/pdf"
-	"github.com/afrizaloky/pdfsign/revocation"
 	"github.com/digitorus/timestamp"
 	"golang.org/x/crypto/ocsp"
 )
@@ -64,18 +64,17 @@ type DocumentInfo struct {
 	CreationDate time.Time `json:"creation_date"`
 }
 
-func File(file *os.File) (apiResp *Response, err error) {
+func File(file *os.File, certPool *x509.CertPool) (apiResp *Response, err error) {
 	finfo, _ := file.Stat()
 	if _, err := file.Seek(0, 0); err != nil {
 		return nil, err
 	}
 
-	return Reader(file, finfo.Size())
+	return Reader(file, finfo.Size(), certPool)
 }
 
-func Reader(file io.ReaderAt, size int64) (apiResp *Response, err error) {
+func Reader(file io.ReaderAt, size int64, certPool *x509.CertPool) (apiResp *Response, err error) {
 	var documentInfo DocumentInfo
-
 	defer func() {
 		if r := recover(); r != nil {
 			apiResp = nil
@@ -194,12 +193,6 @@ func Reader(file io.ReaderAt, size int64) (apiResp *Response, err error) {
 					}
 				}
 			}
-		}
-
-		// Directory of certificates, including OCSP
-		certPool := x509.NewCertPool()
-		for _, cert := range p7.Certificates {
-			certPool.AddCert(cert)
 		}
 
 		// Verify the digital signature of the pdf file.
