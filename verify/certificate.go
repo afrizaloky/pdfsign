@@ -356,12 +356,6 @@ func validateTimestampCertificate(ts *timestamp.Timestamp, options *VerifyOption
 		return false, fmt.Sprintf("Failed to parse timestamp token: %v", err)
 	}
 
-	// Create certificate pool from timestamp certificates
-	certPool := x509.NewCertPool()
-	for _, cert := range p7.Certificates {
-		certPool.AddCert(cert)
-	}
-
 	// Find the timestamp signing certificate
 	var timestampCert *x509.Certificate
 	for _, cert := range p7.Certificates {
@@ -379,9 +373,15 @@ func validateTimestampCertificate(ts *timestamp.Timestamp, options *VerifyOption
 
 	// Verify the timestamp certificate chain against system trusted roots
 	opts := x509.VerifyOptions{
-		Intermediates: certPool,
-		CurrentTime:   ts.Time, // Use timestamp time for validation
-		KeyUsages:     []x509.ExtKeyUsage{x509.ExtKeyUsageTimeStamping},
+		Roots:       options.TrustedCertificate,
+		CurrentTime: ts.Time, // Use timestamp time for validation
+		KeyUsages:   []x509.ExtKeyUsage{x509.ExtKeyUsageTimeStamping},
+	}
+
+	// Create certificate pool from timestamp certificates
+	certPool := x509.NewCertPool()
+	for _, cert := range p7.Certificates {
+		certPool.AddCert(cert)
 	}
 
 	_, err = timestampCert.Verify(opts)
